@@ -200,8 +200,6 @@ int map_is_unit_b_pos(map * m, int pos_x, int pos_y)
 	return ret;
 }
 
-
-
 int map_unit_move_a(map * m, int pos)
 {
 	int ret = 0;
@@ -216,6 +214,21 @@ int map_unit_move_a(map * m, int pos)
 	return ret;
 }
 
+int map_unit_move_b(map * m, int pos)
+{
+	int ret = 0;
+	int new_pos_x = unit_get_pos_x(m->army_b[pos]) + unit_get_direction_x(m->army_b[pos]);
+	int new_pos_y = unit_get_pos_y(m->army_b[pos]) + unit_get_direction_y(m->army_b[pos]);
+	int enemy = map_is_unit_a_pos(m, new_pos_x, new_pos_y) + map_is_unit_b_pos(m, new_pos_x, new_pos_y);	
+
+	if((0 <= new_pos_x) && (new_pos_x < m->size_y) && (0 <= new_pos_y) && (new_pos_y < m->size_x) && (enemy == -2))
+	{
+		ret = 1;
+	}
+	return ret;
+}
+
+
 void map_army_kill_a(map *m, int pos)
 {
 	int new_pos_x = unit_get_pos_x(m->army_a[pos]) + unit_get_direction_x(m->army_a[pos]);
@@ -223,6 +236,15 @@ void map_army_kill_a(map *m, int pos)
 	int enemy = map_is_unit_b_pos(m, new_pos_x, new_pos_y);	
 	unit_kill(m->army_b[enemy]);
 }
+
+void map_army_kill_b(map *m, int pos)
+{
+	int new_pos_x = unit_get_pos_x(m->army_b[pos]) + unit_get_direction_x(m->army_b[pos]);
+	int new_pos_y = unit_get_pos_y(m->army_b[pos]) + unit_get_direction_y(m->army_b[pos]);
+	int enemy = map_is_unit_a_pos(m, new_pos_x, new_pos_y);	
+	unit_kill(m->army_a[enemy]);
+}
+
 
 int map_unit_attack_a(map * m, int pos)
 {
@@ -236,6 +258,20 @@ int map_unit_attack_a(map * m, int pos)
 	}
 	return ret;
 }
+
+int map_unit_attack_b(map * m, int pos)
+{
+	int ret = 0;
+	int new_pos_x = unit_get_pos_x(m->army_b[pos]) + unit_get_direction_x(m->army_b[pos]);
+	int new_pos_y = unit_get_pos_y(m->army_b[pos]) + unit_get_direction_y(m->army_b[pos]);
+	
+	if(map_is_unit_a_pos(m, new_pos_x, new_pos_y) > -1)
+	{
+		ret = 1;
+	}
+	return ret;
+}
+
 
 void map_update_movement_a(map * m)
 {
@@ -264,6 +300,37 @@ void map_update_movement_a(map * m)
 	map_reset_move_a(m);
 }
 
+void map_update_movement_b(map * m)
+{
+	int i = 0;
+	int cont = 0;
+	while(cont == 0)
+	{
+		cont = 1;
+		for(i = 0; i < m->size_army_b; i++)
+		{
+			if(unit_has_moved(m->army_b[i]) == 0 && map_unit_move_b(m, i) == 1)
+			{
+				unit_set_pos_x(m->army_b[i], unit_get_pos_x(m->army_b[i]) + unit_get_direction_x(m->army_b[i]));
+				unit_set_pos_y(m->army_b[i], unit_get_pos_y(m->army_b[i]) + unit_get_direction_y(m->army_b[i]));
+				unit_set_move(m->army_b[i], 1);
+				cont = 0;
+			}
+			if(unit_has_moved(m->army_b[i]) == 0 && map_unit_attack_b(m, i) == 1)
+			{
+				map_army_kill_b(m, i);
+				unit_set_move(m->army_b[i], 1);
+				cont = 0;
+			}
+		}
+	}
+	map_reset_move_b(m);
+}
+
+
+
+
+
 void map_reset_move_a(map * m)
 {
 	int i = 0;
@@ -272,6 +339,18 @@ void map_reset_move_a(map * m)
 		if(unit_get_alive(m->army_a[i]) == 1)
 		{
 			unit_set_move(m->army_a[i], 0);
+		}
+	}
+}
+
+void map_reset_move_b(map * m)
+{
+	int i = 0;
+	for(i = 0; i < m->size_army_b; i++)
+	{
+		if(unit_get_alive(m->army_b[i]) == 1)
+		{
+			unit_set_move(m->army_b[i], 0);
 		}
 	}
 }

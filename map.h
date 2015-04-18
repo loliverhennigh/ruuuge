@@ -32,10 +32,13 @@ int map_is_unit_a(map * m, curser * c);
 int map_is_unit_a_pos(map * m, int pos_x, int pos_y);
 int map_is_unit_b_pos(map * m, int pos_x, int pos_y);
 int map_unit_attack_a(map * m, int pos);
-
+int map_unit_attack_b(map * m, int pos);
 int map_unit_move_a(map * m, int pos);
+int map_unit_move_b(map * m, int pos);
 void map_army_kill_a(map * m, int pos);
+void map_army_kill_b(map * m, int pos);
 void map_reset_move_a(map * m);
+void map_reset_move_b(map * m);
 
 #endif
 

@@ -47,26 +47,14 @@ int main(){
 
 	int i = 0;
 	for( i = 0; i < 10; i ++){
-	first_move_units(m, cc, erg_win);
-	map_update_movement_a(m);
-	map_print_land(m, erg_win);
-	map_print_army(m, erg_win);
-	first_move_units(m, cc, erg_win);
-	map_update_movement_a(m);
-	map_print_land(m, erg_win);
-	map_print_army(m, erg_win);
-	first_move_units(m, cc, erg_win);
-	map_update_movement_a(m);
-	map_print_land(m, erg_win);
-	map_print_army(m, erg_win);
-	first_move_units(m, cc, erg_win);
-	map_update_movement_a(m);
-	map_print_land(m, erg_win);
-	map_print_army(m, erg_win);
-	first_move_units(m, cc, erg_win);
-	map_update_movement_a(m);
-	map_print_land(m, erg_win);
-	map_print_army(m, erg_win);
+		first_move_units(m, cc, erg_win);
+		second_move_units(m, cc, erg_win);
+		map_update_movement_a(m);
+		map_update_movement_b(m);
+		map_update_movement_a(m);
+		map_update_movement_b(m);
+		map_print_land(m, erg_win);
+		map_print_army(m, erg_win);
 	}
 
 	clrtoeol();
